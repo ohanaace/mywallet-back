@@ -29,6 +29,30 @@ export async function signUp(req, res){
     }
 }
 
-export function singIn(req, res) {
-    
+export async function singIn(req, res) {
+    const {email, password} = req.body
+
+    const signInSchema = joi.object({
+        password: joi.string().required().min(3),
+        email: joi.string().email().required()
+    })
+    const newSignIn = { email, password }
+    const validation = signInSchema.validate(newSignIn, { abortEarly: false })
+    if (validation.error) {
+        const error = validation.error.details.map(err => err.message)
+        return res.status(422).send(error)
+    }
+    try {
+        const user = await db.collection("users").findOne({email})
+        if(user && bcrypt.compareSync(password, user.password)){
+            const token = uuid()
+            await db.collection("sessions").insertOne({userId: user._id, token})
+            res.send(token)
+        }
+        if(!user) return res.status(404).send("E-mail não cadastrado.")
+        if(!bcrypt.compareSync(password, user.password)) res.status(401).send("Senha incorreta.")
+    } catch (error) {
+        res.status(500).send(error.message)
+    }
+
 }
