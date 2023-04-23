@@ -1,6 +1,9 @@
-import { Router } from "express";
-import { newEntry } from "../controllers/entry.controller.js";
+import { Router } from "express"; 
+import { getUserEntries, newEntry } from "../controllers/entry.controller.js";
 
-export const transactionRouter = Router()
+const transactionRouter = Router()
 
 transactionRouter.post("/nova-entrada/:tipo", newEntry)
+transactionRouter.get("/home", getUserEntries)
+
+export default transactionRouter
