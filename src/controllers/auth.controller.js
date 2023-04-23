@@ -29,7 +29,7 @@ export async function signUp(req, res){
     }
 }
 
-export async function singIn(req, res) {
+export async function logIn(req, res) {
     const {email, password} = req.body
 
     const signInSchema = joi.object({
@@ -54,5 +54,12 @@ export async function singIn(req, res) {
     } catch (error) {
         res.status(500).send(error.message)
     }
+}
 
+export async function logOut(){
+    try {
+        
+    } catch (error) {
+        
+    }
 }

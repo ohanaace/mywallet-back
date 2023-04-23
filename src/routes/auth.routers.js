@@ -1,9 +1,9 @@
 import { Router } from "express"
-import { signUp, singIn } from "../controllers/auth.controller.js"
+import { signUp, logIn } from "../controllers/auth.controller.js"
 
 const authRouter = Router()
 
 authRouter.post("/cadastro", signUp)
-authRouter.post("/", singIn)
+authRouter.post("/", logIn)
 
 export default authRouter
