@@ -2,7 +2,7 @@ import dayjs from "dayjs"
 import { db } from "../database.js"
 
 export async function newEntry(req, res) {
-    const {tipo} = req.params
+    const { tipo } = req.params
     const { value, description } = req.body
     const user = res.locals.user
     const session = res.locals.session
@@ -18,7 +18,6 @@ export async function newEntry(req, res) {
         }
     } catch (error) {
         res.status(500).send(error.message)
-        
     }
 }
 export async function getUserEntries(req, res) {
@@ -27,12 +26,12 @@ export async function getUserEntries(req, res) {
     try {
         let total = 0
         const transactions = await db.collection("registers").find({ owner: session.userId }).sort({ $natural: -1 }).toArray()
-        for(let i = 0; i < transactions.length; i++){
+        for (let i = 0; i < transactions.length; i++) {
             const registry = transactions[i]
-            if(registry.type === "positive") total += Number(registry.value)
-            if(registry.type === "negative") total -= Number(registry.value)
+            if (registry.type === "positive") total += Number(registry.value)
+            if (registry.type === "negative") total -= Number(registry.value)
         }
-        res.send({transactions, total: total.toFixed(2), name: user.name})
+        res.send({ transactions, total: total.toFixed(2), name: user.name })
     } catch (error) {
         res.status(500).send(error.message)
     }
