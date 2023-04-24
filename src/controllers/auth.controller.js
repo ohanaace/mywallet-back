@@ -23,8 +23,9 @@ export async function logIn(req, res) {
         const user = await db.collection("users").findOne({ email })
         if (user && bcrypt.compareSync(password, user.password)) {
             const token = uuid()
+            const info = {name: user.name, token}
             await db.collection("sessions").insertOne({ userId: user._id, token })
-            res.send(token)
+            res.send(info)
         }
         if (!user) return res.status(404).send("E-mail não cadastrado.")
         if (!bcrypt.compareSync(password, user.password)) res.status(401).send("Senha incorreta.")
