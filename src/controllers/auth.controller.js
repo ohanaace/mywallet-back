@@ -1,23 +1,17 @@
 import bcrypt from "bcrypt"
-import joi from "joi"
 import { v4 as uuid } from "uuid"
 import { db } from "../database.js"
+import { signUpSchema } from "../schemas/signUpSchema.js"
+import { signInSchema } from "../schemas/signInSchema.js"
 
 export async function signUp(req, res) {
     const { name, email, password } = req.body
 
-    const signUpSchema = joi.object({
-        name: joi.string().required(),
-        password: joi.string().required().min(3),
-        email: joi.string().email().required()
-    })
-    const newSignUp = { name, email, password }
-    const validation = signUpSchema.validate(newSignUp, { abortEarly: false })
+    const validation = signUpSchema.validate(req.body, { abortEarly: false })
     if (validation.error) {
         const error = validation.error.details.map(err => err.message)
         return res.status(422).send(error)
     }
-
     try {
         const usedEmail = await db.collection("users").findOne({ email })
         if (usedEmail) return res.status(409).send("Email já cadastrado.")
@@ -31,11 +25,6 @@ export async function signUp(req, res) {
 
 export async function logIn(req, res) {
     const { email, password } = req.body
-
-    const signInSchema = joi.object({
-        password: joi.string().required().min(3),
-        email: joi.string().email().required()
-    })
     const validation = signInSchema.validate(req.body, { abortEarly: false })
     if (validation.error) {
         const error = validation.error.details.map(err => err.message)

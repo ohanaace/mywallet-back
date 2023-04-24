@@ -1,6 +1,7 @@
 import joi from "joi"
 import dayjs from "dayjs"
 import { db } from "../database.js"
+import { entrySchema } from "../schemas/entrySchema.js"
 
 export async function newEntry(req, res) {
     const { authorization } = req.headers
@@ -8,11 +9,7 @@ export async function newEntry(req, res) {
     const token = authorization?.replace("Bearer ", "")
 
     if (!token) return res.sendStatus(401)
-
-    const entrySchema = joi.object({
-        value: joi.number().precision(2).positive().required(),
-        description: joi.string().required()
-    })
+    
     const validation = entrySchema.validate(req.body, { abortEarly: false })
     if (validation.error) {
         const err = validation.error.details.map(error => error.message)
